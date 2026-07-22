@@ -29,6 +29,16 @@ local position = require("lvim-test.position")
 
 local M = {}
 
+-- Filetype → treesitter parser name, for the well-known cases where they differ (the JS/TS family).
+-- Used before `get_lang` so discovery works even when the runtime has not registered the aliases.
+---@type table<string, string>
+M.FT_LANG = {
+    typescriptreact = "tsx",
+    javascriptreact = "javascript",
+    ["javascript.jsx"] = "javascript",
+    ["typescript.tsx"] = "tsx",
+}
+
 ---@type table<string, { stamp: string, map: table<string, LvimTestPosition> }>
 local cache = {}
 
@@ -166,7 +176,13 @@ function M.file(adapter, path, bufnr)
         return hit.map
     end
 
-    local lang = adapter.lang or (bufnr and vim.bo[bufnr].filetype) or vim.filetype.match({ filename = path }) or ""
+    -- Resolve the treesitter LANGUAGE, not the filetype: several filetypes map to a differently-named
+    -- parser (typescriptreact → tsx, javascriptreact → javascript). `adapter.lang` wins when pinned;
+    -- otherwise a known alias, then `get_lang` (registered aliases), then the filetype itself. The
+    -- alias table encodes the well-known JS/TS cases so an adapter spanning those filetypes works even
+    -- when the runtime has not registered the parser aliases.
+    local ft = (bufnr and vim.bo[bufnr].filetype) or vim.filetype.match({ filename = path }) or ""
+    local lang = adapter.lang or M.FT_LANG[ft] or (ft ~= "" and vim.treesitter.language.get_lang(ft)) or ft
     local source
     if bufnr and vim.api.nvim_buf_is_loaded(bufnr) then
         source = bufnr

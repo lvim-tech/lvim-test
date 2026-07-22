@@ -10,8 +10,10 @@ which files are tests, a treesitter query that finds the individual tests, how t
 command, and how to read the runner's output. The engine owns discovery, the run pipeline and the
 results — it never knows what "go" or "dart" means.
 
-Adapters shipped: **Go** (`go test -json`) and **Dart / Flutter** (`flutter test --machine` /
-`dart test --reporter=json`). External adapters self-register.
+Adapters shipped: **Go** (`go test -json`), **Dart / Flutter** (`flutter test --machine` /
+`dart test --reporter=json`), **Rust** (`cargo test`), **Python** (`pytest -v`) and **TypeScript /
+JavaScript** (`vitest` / `jest`, across `typescript` / `typescriptreact` / `javascript` /
+`javascriptreact`). External adapters self-register.
 
 ## Features
 
@@ -85,7 +87,7 @@ require("lvim-test").setup({
     -- Built-in adapters to load (each self-registers). External adapters register themselves via
     -- require("lvim-test").register(); per-adapter options live under the matching key.
     adapters = {
-        enabled = { "go", "dart" },
+        enabled = { "go", "dart", "rust", "python", "typescript" },
         go = {
             args = {}, -- extra `go test` args on every run
             env = {},
@@ -94,6 +96,20 @@ require("lvim-test").setup({
         dart = {
             args = {}, -- extra `flutter test` / `dart test` args
             env = {},
+        },
+        rust = {
+            cargo_args = {}, -- extra `cargo test` args (before `--`)
+            env = {},
+            features = nil, -- `--features` value (nil = none)
+        },
+        python = {
+            args = {}, -- extra `pytest` args on every run
+            env = {},
+        },
+        typescript = {
+            args = {}, -- extra vitest / jest args on every run
+            env = {},
+            runner = nil, -- force "vitest" | "jest" (nil = auto-detect)
         },
     },
 

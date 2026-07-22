@@ -50,16 +50,28 @@ function M.check()
             if adapter.health then
                 pcall(adapter.health, h)
             end
-            local lang = adapter.lang
-            if lang then
-                local ok_ts, ts = pcall(require, "lvim-ts")
-                if ok_ts and ts.missing_for_ft then
-                    local missing = ts.missing_for_ft(adapter.filetypes and adapter.filetypes[1] or lang)
-                    if missing then
-                        h.warn(("treesitter parser '%s' not installed (%s discovery needs it)"):format(missing, name))
-                    else
-                        h.ok("treesitter parser for " .. name .. " available")
+            -- Check the treesitter parser for EVERY filetype the adapter spans (a multi-filetype
+            -- adapter like typescript pins no single `lang` and needs tsx AND javascript, so the
+            -- per-filetype check is required — the first-filetype-only check missed them).
+            local ok_ts, ts = pcall(require, "lvim-ts")
+            if ok_ts and ts.missing_for_ft then
+                local seen, any_missing = {}, false
+                for _, ft in ipairs(adapter.filetypes or {}) do
+                    local missing = ts.missing_for_ft(ft)
+                    if missing and not seen[missing] then
+                        seen[missing] = true
+                        any_missing = true
+                        h.warn(
+                            ("treesitter parser '%s' not installed (%s discovery of %s needs it)"):format(
+                                missing,
+                                name,
+                                ft
+                            )
+                        )
                     end
+                end
+                if not any_missing then
+                    h.ok("treesitter parsers for " .. name .. " available")
                 end
             end
         end

@@ -18,10 +18,27 @@
 ---@field args string[]              Extra `flutter test` / `dart test` args
 ---@field env  table<string,string>  Extra environment
 
+---@class LvimTestRustConfig
+---@field cargo_args string[]              Extra `cargo test` args (before `--`)
+---@field env        table<string,string>  Extra environment for the cargo test process
+---@field features?  string                `--features` value (nil = none)
+
+---@class LvimTestPythonConfig
+---@field args string[]              Extra `pytest` args appended on every run
+---@field env  table<string,string>  Extra environment for the pytest process
+
+---@class LvimTestTypescriptConfig
+---@field args    string[]              Extra vitest / jest args appended on every run
+---@field env     table<string,string>  Extra environment
+---@field runner? string                Force the runner: "vitest" | "jest" (nil = auto-detect)
+
 ---@class LvimTestAdaptersConfig
----@field enabled string[]           Built-in adapters to load (each self-registers)
----@field go      LvimTestGoConfig
----@field dart    LvimTestDartConfig
+---@field enabled    string[]           Built-in adapters to load (each self-registers)
+---@field go         LvimTestGoConfig
+---@field dart       LvimTestDartConfig
+---@field rust       LvimTestRustConfig
+---@field python     LvimTestPythonConfig
+---@field typescript LvimTestTypescriptConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -107,7 +124,7 @@ return {
     -- Per-adapter options live under the matching key below — the max-configurability rule:
     -- an adapter never hardcodes what a user might want to change.
     adapters = {
-        enabled = { "go", "dart" },
+        enabled = { "go", "dart", "rust", "python", "typescript" },
         go = {
             args = {}, -- extra `go test` args on every run
             env = {},
@@ -116,6 +133,20 @@ return {
         dart = {
             args = {}, -- extra `flutter test` / `dart test` args
             env = {},
+        },
+        rust = {
+            cargo_args = {}, -- extra `cargo test` args (before `--`)
+            env = {},
+            features = nil, -- `--features` value (nil = none)
+        },
+        python = {
+            args = {}, -- extra `pytest` args on every run
+            env = {},
+        },
+        typescript = {
+            args = {}, -- extra vitest / jest args on every run
+            env = {},
+            runner = nil, -- force "vitest" | "jest" (nil = auto-detect)
         },
     },
 
