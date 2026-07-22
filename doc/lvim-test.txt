@@ -1,0 +1,131 @@
+*lvim-test.txt*                A native, granular test-runner for the lvim-tech ecosystem
+
+==============================================================================
+CONTENTS                                                     *lvim-test-contents*
+
+    1. Introduction ......................... |lvim-test-introduction|
+    2. Requirements ......................... |lvim-test-requirements|
+    3. Installation ......................... |lvim-test-installation|
+    4. Commands ............................. |lvim-test-commands|
+    5. Configuration ........................ |lvim-test-configuration|
+    6. Project-local config ................. |lvim-test-project|
+    7. Adapters ............................. |lvim-test-adapters|
+    8. Statusline ........................... |lvim-test-statusline|
+    9. Health ............................... |lvim-test-health|
+
+==============================================================================
+1. INTRODUCTION                                          *lvim-test-introduction*
+
+lvim-test runs THIS test, THIS file, or the whole SUITE from inside Neovim and
+reports per-test pass / fail / skip as they stream in. Tests are discovered
+automatically from the project with treesitter and run through |lvim-tasks|.
+
+It is a thin ENGINE plus per-language ADAPTERS. An adapter is mostly data:
+which files are tests, a treesitter query that finds the individual tests, how
+to build the run command, and how to read the runner's output. The engine owns
+discovery, the run pipeline and the results; it never branches on a language.
+
+Shipped adapters: Go (`go test -json`) and Dart / Flutter (`flutter test
+--machine` / `dart test --reporter=json`). External adapters self-register.
+
+==============================================================================
+2. REQUIREMENTS                                          *lvim-test-requirements*
+
+    - Neovim >= 0.11
+    - lvim-tasks   the execution backend (required)
+    - lvim-ui      windows (required)
+    - lvim-utils   palette / merge / store / cursor (required)
+    - lvim-ts      treesitter parsers for discovery (required)
+    - lvim-dap     optional: debug a test
+    - lvim-lang    optional: toolchain resolution (FVM / explicit SDK)
+
+==============================================================================
+3. INSTALLATION                                          *lvim-test-installation*
+
+Install and manage it from the ecosystem's lvim-installer (the Plugins tab), or
+with Neovim's native `vim.pack`: >lua
+    vim.pack.add({ "https://github.com/lvim-tech/lvim-test" })
+    require("lvim-test").setup({})
+<
+==============================================================================
+4. COMMANDS                                                  *lvim-test-commands*
+
+                                                                      *:LvimTest*
+:LvimTest [sub]         With no subcommand, runs the nearest test.
+
+    run [-- {args}]     Run the nearest test (extra runner args after `--`).
+    file [-- {args}]    Run every test in the current file.
+    suite               Run the whole project suite (every discovered test).
+    watch [stop]        Toggle watch on the nearest test (re-run on save);
+                        `stop` stops every watch.
+    last                Replay the last run in this project.
+    failed              Re-run every currently-failed test.
+    debug               Debug the nearest test through lvim-dap (the debuggee's
+                        exit code becomes the position's result).
+    output [short]      Show the nearest test's output (short = one-line summary).
+    jump next|prev [failed]
+                        Jump to the next/previous test (optionally only failed).
+    summary             Toggle the summary sidebar (a docked tree of the tests).
+    stop                Stop the live run.
+    attach              Focus the live run's terminal output (the tasks panel).
+    clear               Clear results / diagnostics / signs for the project.
+    refresh             Drop discovery caches and re-parse open test files.
+
+==============================================================================
+5. CONFIGURATION                                        *lvim-test-configuration*
+
+`setup()` merges your options into the live config in place; every value is
+overridable and your values win. See the README for the COMPLETE default block
+(kept in sync with `lua/lvim-test/config.lua`). The top-level groups:
+
+    adapters      enabled built-ins ("go", "dart") + per-adapter options
+    discovery     the project file-walk (ignore_dirs, max_files)
+    run           save / concurrency / on_busy / missing_result / env
+    persist       last run / marks / statuses via lvim-utils.store
+    project       the ".lvim/test/config.lua" per-project override location
+    summary       the docked summary tree (side / width / follow / keys)
+    output        per-test output float caps + open_on_fail
+    diagnostics   inline failure diagnostics (own vim.diagnostic namespace)
+    status        gutter signs / eol status / spinner / statusline format
+    watch         re-run on save (debounce / scope)
+    icons         every glyph (Nerd Font; the spinner is single-width braille)
+
+==============================================================================
+6. PROJECT-LOCAL CONFIG                                        *lvim-test-project*
+
+A `<root>/.lvim/test/config.lua` file returns a pure-data table merged over your
+global config for that project (e.g. per-project runner args / environment): >lua
+    return {
+        adapters = { go = { args = { "-race" } } },
+        run = { env = { CI = "1" } },
+    }
+<
+==============================================================================
+7. ADAPTERS                                                  *lvim-test-adapters*
+
+                                                        *lvim-test.register()*
+require("lvim-test").register({adapter})
+
+An adapter is a table registered in any load order, at runtime. The minimum:
+`name`, `filetypes`, `root_markers`, a cheap `is_test_file`, a treesitter
+discovery `query` (capturing `@test.name`/`@test.definition` and optionally
+`@namespace.name`/`@namespace.definition`), a `build` returning the argv, and a
+`parse` (or a streaming `stream`) turning runner output into per-position
+`{ status, short?, output?, errors? }`. See `lua/lvim-test/adapters/go.lua`.
+
+==============================================================================
+8. STATUSLINE                                              *lvim-test-statusline*
+
+                                                            *lvim-test.status()*
+require("lvim-test").status([{bufnr}])
+
+Returns the current root's aggregate segment (per `config.status.format`) for a
+statusline; an empty string when the buffer has no adapter or no results.
+
+==============================================================================
+9. HEALTH                                                      *lvim-test-health*
+
+`:checkhealth lvim-test` reports the ecosystem dependencies, the registered
+adapters and each adapter's tool + treesitter-parser availability.
+
+vim:tw=78:ts=8:ft=help:norl:
