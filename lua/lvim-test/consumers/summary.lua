@@ -642,9 +642,51 @@ function M.open()
         size = { width = { fixed = config.summary.width } },
         content = { blocks = { { id = "tree", provider = state.panel.provider } } },
         close_keys = {},
-        -- No footer bar: a full-height side dock pins its footer to the SCREEN bottom, where it sits
-        -- beside the tasks panel's own footer and reads as clutter. The keys are always live
-        -- (`?` help, `q` close) — the help window lists them all.
+        -- Footer legend (DISPLAY-only chips — the keys are already bound on the panel above; a chip's
+        -- `run` still fires on click). The surface's place_footer hides this band while a dock (the tasks
+        -- panel) overlaps the side tree's bottom, and re-shows it when the dock closes.
+        footer = {
+            bars = {
+                {
+                    align = "center",
+                    items = {
+                        surface.button({
+                            name = "filter",
+                            key = config.summary.keys.filter_failed,
+                            no_hotkey = true,
+                            run = function()
+                                state.filter_failed = not state.filter_failed
+                                M.refresh()
+                            end,
+                        }, "action"),
+                        surface.button({
+                            name = "clear",
+                            key = config.summary.keys.clear,
+                            no_hotkey = true,
+                            run = function()
+                                if state.root then
+                                    results.clear(state.root)
+                                end
+                            end,
+                        }, "action"),
+                        surface.button({
+                            name = "help",
+                            key = config.summary.keys.help,
+                            no_hotkey = true,
+                            run = show_help,
+                        }, "action"),
+                        surface.button({
+                            name = "close",
+                            key = "q/Esc",
+                            no_hotkey = true,
+                            run = function()
+                                M.close()
+                            end,
+                        }, "action"),
+                    },
+                },
+            },
+        },
     })
 end
 
