@@ -14,7 +14,8 @@ Adapters shipped: **Go** (`go test -json`), **Dart / Flutter** (`flutter test --
 `dart test --reporter=json`), **Rust** (`cargo test`), **Python** (`pytest -v`), **TypeScript /
 JavaScript** (`vitest` / `jest`, across `typescript` / `typescriptreact` / `javascript` /
 `javascriptreact`), **C / C++** (GoogleTest + Catch2 via CTest), **Java** (JUnit via gradle / maven,
-surefire XML) and **C# / .NET** (`dotnet test`, TRX report). External adapters self-register.
+surefire XML), **C# / .NET** (`dotnet test`, TRX report) and **Zig** (`zig test` / `zig build test`,
+streamed `N/M test.name...OK|SKIP|FAIL`). External adapters self-register.
 
 ## Features
 

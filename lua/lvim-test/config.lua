@@ -46,6 +46,26 @@
 ---@field args string[]              Extra `dotnet test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the dotnet test process
 
+---@class LvimTestKotlinConfig
+---@field args string[]              Extra `gradle test` / `mvn test` args appended on every run
+---@field env  table<string,string>  Extra environment for the test process
+
+---@class LvimTestSwiftConfig
+---@field args string[]              Extra `swift test` args appended on every run
+---@field env  table<string,string>  Extra environment for the swift test process
+
+---@class LvimTestPhpConfig
+---@field args string[]              Extra `phpunit` args appended on every run
+---@field env  table<string,string>  Extra environment for the phpunit process
+
+---@class LvimTestRubyConfig
+---@field args string[]              Extra `rspec` args appended on every run
+---@field env  table<string,string>  Extra environment for the rspec process
+
+---@class LvimTestZigConfig
+---@field args string[]              Extra `zig test` / `zig build test` args appended on every run
+---@field env  table<string,string>  Extra environment for the zig test process
+
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
 ---@field go         LvimTestGoConfig
@@ -56,6 +76,11 @@
 ---@field cpp        LvimTestCppConfig
 ---@field java       LvimTestJavaConfig
 ---@field csharp     LvimTestCsharpConfig
+---@field kotlin     LvimTestKotlinConfig
+---@field swift      LvimTestSwiftConfig
+---@field php        LvimTestPhpConfig
+---@field ruby       LvimTestRubyConfig
+---@field zig        LvimTestZigConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -141,7 +166,21 @@ return {
     -- Per-adapter options live under the matching key below — the max-configurability rule:
     -- an adapter never hardcodes what a user might want to change.
     adapters = {
-        enabled = { "go", "dart", "rust", "python", "typescript", "cpp", "java", "csharp" },
+        enabled = {
+            "go",
+            "dart",
+            "rust",
+            "python",
+            "typescript",
+            "cpp",
+            "java",
+            "csharp",
+            "kotlin",
+            "swift",
+            "php",
+            "ruby",
+            "zig",
+        },
         go = {
             args = {}, -- extra `go test` args on every run
             env = {},
@@ -179,12 +218,43 @@ return {
             args = {}, -- extra `dotnet test` args on every run
             env = {},
         },
+        kotlin = {
+            args = {}, -- extra `gradle test` / `mvn test` args on every run
+            env = {},
+        },
+        swift = {
+            args = {}, -- extra `swift test` args on every run
+            env = {},
+        },
+        php = {
+            args = {}, -- extra `phpunit` args on every run
+            env = {},
+        },
+        ruby = {
+            args = {}, -- extra `rspec` args on every run
+            env = {},
+        },
+        zig = {
+            args = {}, -- extra `zig test` / `zig build test` args on every run
+            env = {},
+        },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
     -- of a file's positions is separate + lazy — only on open / run / expand).
     discovery = {
-        ignore_dirs = { ".git", "node_modules", "target", "build", "dist", ".venv", "__pycache__" },
+        ignore_dirs = {
+            ".git",
+            "node_modules",
+            "target",
+            "build",
+            ".build",
+            "dist",
+            ".venv",
+            "__pycache__",
+            "zig-out",
+            ".zig-cache",
+        },
         max_files = 5000, -- project-walk cap
     },
 
