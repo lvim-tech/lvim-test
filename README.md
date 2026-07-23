@@ -11,9 +11,10 @@ command, and how to read the runner's output. The engine owns discovery, the run
 results — it never knows what "go" or "dart" means.
 
 Adapters shipped: **Go** (`go test -json`), **Dart / Flutter** (`flutter test --machine` /
-`dart test --reporter=json`), **Rust** (`cargo test`), **Python** (`pytest -v`) and **TypeScript /
+`dart test --reporter=json`), **Rust** (`cargo test`), **Python** (`pytest -v`), **TypeScript /
 JavaScript** (`vitest` / `jest`, across `typescript` / `typescriptreact` / `javascript` /
-`javascriptreact`). External adapters self-register.
+`javascriptreact`), **C / C++** (GoogleTest + Catch2 via CTest), **Java** (JUnit via gradle / maven,
+surefire XML) and **C# / .NET** (`dotnet test`, TRX report). External adapters self-register.
 
 ## Features
 
@@ -87,7 +88,7 @@ require("lvim-test").setup({
     -- Built-in adapters to load (each self-registers). External adapters register themselves via
     -- require("lvim-test").register(); per-adapter options live under the matching key.
     adapters = {
-        enabled = { "go", "dart", "rust", "python", "typescript" },
+        enabled = { "go", "dart", "rust", "python", "typescript", "cpp", "java", "csharp" },
         go = {
             args = {}, -- extra `go test` args on every run
             env = {},
@@ -110,6 +111,20 @@ require("lvim-test").setup({
             args = {}, -- extra vitest / jest args on every run
             env = {},
             runner = nil, -- force "vitest" | "jest" (nil = auto-detect)
+        },
+        cpp = {
+            build_dir = "build", -- CMake build dir (ctest --test-dir)
+            ctest_args = {},
+            ctest_path = nil, -- explicit ctest binary (nil = PATH)
+            env = {},
+        },
+        java = {
+            args = {}, -- extra `gradle test` / `mvn test` args
+            env = {},
+        },
+        csharp = {
+            args = {}, -- extra `dotnet test` args
+            env = {},
         },
     },
 

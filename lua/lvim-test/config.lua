@@ -32,6 +32,20 @@
 ---@field env     table<string,string>  Extra environment
 ---@field runner? string                Force the runner: "vitest" | "jest" (nil = auto-detect)
 
+---@class LvimTestCppConfig
+---@field build_dir  string                CMake build dir (ctest --test-dir)
+---@field ctest_args string[]              Extra `ctest` args on every run
+---@field ctest_path? string               Explicit ctest binary (nil = PATH)
+---@field env        table<string,string>  Extra environment for the ctest process
+
+---@class LvimTestJavaConfig
+---@field args string[]              Extra `gradle test` / `mvn test` args appended on every run
+---@field env  table<string,string>  Extra environment for the test process
+
+---@class LvimTestCsharpConfig
+---@field args string[]              Extra `dotnet test` args appended on every run
+---@field env  table<string,string>  Extra environment for the dotnet test process
+
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
 ---@field go         LvimTestGoConfig
@@ -39,6 +53,9 @@
 ---@field rust       LvimTestRustConfig
 ---@field python     LvimTestPythonConfig
 ---@field typescript LvimTestTypescriptConfig
+---@field cpp        LvimTestCppConfig
+---@field java       LvimTestJavaConfig
+---@field csharp     LvimTestCsharpConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -124,7 +141,7 @@ return {
     -- Per-adapter options live under the matching key below — the max-configurability rule:
     -- an adapter never hardcodes what a user might want to change.
     adapters = {
-        enabled = { "go", "dart", "rust", "python", "typescript" },
+        enabled = { "go", "dart", "rust", "python", "typescript", "cpp", "java", "csharp" },
         go = {
             args = {}, -- extra `go test` args on every run
             env = {},
@@ -147,6 +164,20 @@ return {
             args = {}, -- extra vitest / jest args on every run
             env = {},
             runner = nil, -- force "vitest" | "jest" (nil = auto-detect)
+        },
+        cpp = {
+            build_dir = "build", -- CMake build dir (ctest --test-dir points here)
+            ctest_args = {}, -- extra `ctest` args on every run
+            ctest_path = nil, -- explicit ctest binary (nil = PATH)
+            env = {},
+        },
+        java = {
+            args = {}, -- extra `gradle test` / `mvn test` args on every run
+            env = {},
+        },
+        csharp = {
+            args = {}, -- extra `dotnet test` args on every run
+            env = {},
         },
     },
 
