@@ -46,9 +46,23 @@
 ---@field args string[]              Extra `dotnet test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the dotnet test process
 
+---@class LvimTestFsharpConfig
+---@field args string[]              Extra `dotnet test` args appended on every run
+---@field env  table<string,string>  Extra environment for the dotnet test process
+
 ---@class LvimTestKotlinConfig
 ---@field args string[]              Extra `gradle test` / `mvn test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the test process
+
+---@class LvimTestScalaConfig
+---@field args string[]              Extra `sbt` / `mill` test args appended on every run
+---@field env  table<string,string>  Extra environment for the test process
+
+---@class LvimTestClojureConfig
+---@field test_alias string          The deps.edn `:test` alias the Clojure CLI runs (default "test")
+---@field test_exec  boolean         Clojure CLI: `-X:test` exec runner (true, filters) vs `-M:test` main (false)
+---@field args       string[]        Extra test args appended on every run (after the tool's test verb)
+---@field env        table<string,string>  Extra environment for the test process
 
 ---@class LvimTestSwiftConfig
 ---@field args string[]              Extra `swift test` args appended on every run
@@ -66,6 +80,22 @@
 ---@field args string[]              Extra `zig test` / `zig build test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the zig test process
 
+---@class LvimTestOcamlConfig
+---@field args string[]              Extra `dune runtest` args appended on every run
+---@field env  table<string,string>  Extra environment for the dune runtest process
+
+---@class LvimTestErlangConfig
+---@field args string[]              Extra `rebar3 eunit` args appended on every run
+---@field env  table<string,string>  Extra environment for the rebar3 eunit process
+
+---@class LvimTestElixirConfig
+---@field args string[]              Extra `mix test` args appended on every run
+---@field env  table<string,string>  Extra environment for the mix test process
+
+---@class LvimTestHaskellConfig
+---@field args string[]              Extra `stack test` / `cabal test` args appended on every run
+---@field env  table<string,string>  Extra environment for the hspec test process
+
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
 ---@field go         LvimTestGoConfig
@@ -76,11 +106,18 @@
 ---@field cpp        LvimTestCppConfig
 ---@field java       LvimTestJavaConfig
 ---@field csharp     LvimTestCsharpConfig
+---@field fsharp     LvimTestFsharpConfig
 ---@field kotlin     LvimTestKotlinConfig
+---@field scala      LvimTestScalaConfig
 ---@field swift      LvimTestSwiftConfig
 ---@field php        LvimTestPhpConfig
 ---@field ruby       LvimTestRubyConfig
 ---@field zig        LvimTestZigConfig
+---@field ocaml      LvimTestOcamlConfig
+---@field erlang     LvimTestErlangConfig
+---@field elixir     LvimTestElixirConfig
+---@field haskell    LvimTestHaskellConfig
+---@field clojure    LvimTestClojureConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -175,11 +212,18 @@ return {
             "cpp",
             "java",
             "csharp",
+            "fsharp",
             "kotlin",
+            "scala",
             "swift",
             "php",
             "ruby",
             "zig",
+            "ocaml",
+            "erlang",
+            "elixir",
+            "haskell",
+            "clojure",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -218,8 +262,16 @@ return {
             args = {}, -- extra `dotnet test` args on every run
             env = {},
         },
+        fsharp = {
+            args = {}, -- extra `dotnet test` args on every run
+            env = {},
+        },
         kotlin = {
             args = {}, -- extra `gradle test` / `mvn test` args on every run
+            env = {},
+        },
+        scala = {
+            args = {}, -- extra `sbt` / `mill` test args on every run
             env = {},
         },
         swift = {
@@ -236,6 +288,28 @@ return {
         },
         zig = {
             args = {}, -- extra `zig test` / `zig build test` args on every run
+            env = {},
+        },
+        ocaml = {
+            args = {}, -- extra `dune runtest` args on every run
+            env = {},
+        },
+        erlang = {
+            args = {}, -- extra `rebar3 eunit` args on every run
+            env = {},
+        },
+        elixir = {
+            args = {}, -- extra `mix test` args on every run
+            env = {},
+        },
+        haskell = {
+            args = {}, -- extra `stack test` / `cabal test` args on every run
+            env = {},
+        },
+        clojure = {
+            test_alias = "test", -- the deps.edn `:test` alias the Clojure CLI runs
+            test_exec = true, -- Clojure CLI: `-X:test` exec runner (filters) vs `-M:test` main
+            args = {}, -- extra test args on every run (after the tool's test verb)
             env = {},
         },
     },
