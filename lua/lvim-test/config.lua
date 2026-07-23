@@ -96,6 +96,23 @@
 ---@field args string[]              Extra `stack test` / `cabal test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the hspec test process
 
+---@class LvimTestJuliaConfig
+---@field project string?            `--project` value for `Pkg.test()` (default "." — the current project)
+---@field args    string[]           Extra args appended to the julia test invocation
+---@field env      table<string,string>  Extra environment for the julia test process
+
+---@class LvimTestRConfig
+---@field args string[]              Extra args appended to the Rscript testthat invocation
+---@field env  table<string,string>  Extra environment for the Rscript process
+
+---@class LvimTestPerlConfig
+---@field args string[]              Extra `prove` args appended on every run
+---@field env  table<string,string>  Extra environment for the prove process
+
+---@class LvimTestDConfig
+---@field args string[]              Extra `dub test` args appended on every run
+---@field env  table<string,string>  Extra environment for the dub test process
+
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
 ---@field go         LvimTestGoConfig
@@ -118,6 +135,10 @@
 ---@field elixir     LvimTestElixirConfig
 ---@field haskell    LvimTestHaskellConfig
 ---@field clojure    LvimTestClojureConfig
+---@field julia      LvimTestJuliaConfig
+---@field r          LvimTestRConfig
+---@field perl       LvimTestPerlConfig
+---@field d          LvimTestDConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -224,6 +245,10 @@ return {
             "elixir",
             "haskell",
             "clojure",
+            "julia",
+            "r",
+            "perl",
+            "d",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -310,6 +335,23 @@ return {
             test_alias = "test", -- the deps.edn `:test` alias the Clojure CLI runs
             test_exec = true, -- Clojure CLI: `-X:test` exec runner (filters) vs `-M:test` main
             args = {}, -- extra test args on every run (after the tool's test verb)
+            env = {},
+        },
+        julia = {
+            project = ".", -- `--project` value for Pkg.test()
+            args = {}, -- extra args on the julia test invocation
+            env = {},
+        },
+        r = {
+            args = {}, -- extra args on the Rscript testthat invocation
+            env = {},
+        },
+        perl = {
+            args = {}, -- extra `prove` args on every run
+            env = {},
+        },
+        d = {
+            args = {}, -- extra `dub test` args on every run
             env = {},
         },
     },
