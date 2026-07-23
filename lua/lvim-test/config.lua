@@ -143,6 +143,33 @@
 ---@class LvimTestHareConfig
 ---@field args string[]              Extra `hare test` args
 ---@field env  table<string,string>
+---@class LvimTestGroovyConfig
+---@field args string[]              Extra `gradle test` args
+---@field env  table<string,string>
+---@class LvimTestRescriptConfig
+---@field args string[]              Extra `rescript` args
+---@field env  table<string,string>
+---@class LvimTestValaConfig
+---@field args string[]              Extra `meson test` args
+---@field env  table<string,string>
+---@class LvimTestRocConfig
+---@field args string[]              Extra `roc test` args
+---@field env  table<string,string>
+---@class LvimTestFishConfig
+---@field args string[]              Extra `fish` args
+---@field env  table<string,string>
+---@class LvimTestNushellConfig
+---@field args string[]              Extra `nu` args
+---@field env  table<string,string>
+---@class LvimTestGrainConfig
+---@field args string[]              Extra `grain` args
+---@field env  table<string,string>
+---@class LvimTestCommonlispConfig
+---@field args string[]              Extra `asdf:test-system` args
+---@field env  table<string,string>
+---@class LvimTestPascalConfig
+---@field args string[]              Extra `fpcunit` args
+---@field env  table<string,string>
 
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
@@ -180,6 +207,15 @@
 ---@field purescript LvimTestPurescriptConfig
 ---@field ada        LvimTestAdaConfig
 ---@field hare       LvimTestHareConfig
+---@field groovy     LvimTestGroovyConfig
+---@field rescript   LvimTestRescriptConfig
+---@field vala       LvimTestValaConfig
+---@field roc        LvimTestRocConfig
+---@field fish       LvimTestFishConfig
+---@field nushell    LvimTestNushellConfig
+---@field grain      LvimTestGrainConfig
+---@field commonlisp LvimTestCommonlispConfig
+---@field pascal     LvimTestPascalConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -300,6 +336,15 @@ return {
             "purescript",
             "ada",
             "hare",
+            "groovy",
+            "rescript",
+            "vala",
+            "roc",
+            "fish",
+            "nushell",
+            "grain",
+            "commonlisp",
+            "pascal",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -415,6 +460,15 @@ return {
         purescript = { args = {}, env = {} },
         ada = { args = {}, env = {} },
         hare = { args = {}, env = {} },
+        groovy = { args = {}, env = {} },
+        rescript = { args = {}, env = {} },
+        vala = { args = {}, env = {} },
+        roc = { args = {}, env = {} },
+        fish = { args = {}, env = {} },
+        nushell = { args = {}, env = {} },
+        grain = { args = {}, env = {} },
+        commonlisp = { args = {}, env = {} },
+        pascal = { args = {}, env = {} },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
