@@ -176,6 +176,18 @@
 ---@class LvimTestAnsibleConfig
 ---@field args string[]              Extra `molecule test` args
 ---@field env  table<string,string>
+---@class LvimTestFortranConfig
+---@field args string[]              Extra `fpm test` args
+---@field env  table<string,string>
+---@class LvimTestTclConfig
+---@field args string[]              Extra `tclsh` args
+---@field env  table<string,string>
+---@class LvimTestSolidityConfig
+---@field args string[]              Extra `forge test` args
+---@field env  table<string,string>
+---@class LvimTestPowershellConfig
+---@field args string[]              Extra `Invoke-Pester` args
+---@field env  table<string,string>
 
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
@@ -224,6 +236,10 @@
 ---@field pascal     LvimTestPascalConfig
 ---@field terraform  LvimTestTerraformConfig
 ---@field ansible    LvimTestAnsibleConfig
+---@field fortran    LvimTestFortranConfig
+---@field tcl        LvimTestTclConfig
+---@field solidity   LvimTestSolidityConfig
+---@field powershell LvimTestPowershellConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -355,6 +371,10 @@ return {
             "pascal",
             "terraform",
             "ansible",
+            "fortran",
+            "tcl",
+            "solidity",
+            "powershell",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -481,6 +501,10 @@ return {
         pascal = { args = {}, env = {} },
         terraform = { args = {}, env = {} },
         ansible = { args = {}, env = {} },
+        fortran = { args = {}, env = {} },
+        tcl = { args = {}, env = {} },
+        solidity = { args = {}, env = {} },
+        powershell = { args = {}, env = {} },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
