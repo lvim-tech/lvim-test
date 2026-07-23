@@ -188,6 +188,15 @@
 ---@class LvimTestPowershellConfig
 ---@field args string[]              Extra `Invoke-Pester` args
 ---@field env  table<string,string>
+---@class LvimTestMoveConfig
+---@field args string[]              Extra `move test` args
+---@field env  table<string,string>
+---@class LvimTestCairoConfig
+---@field args string[]              Extra `scarb test` args
+---@field env  table<string,string>
+---@class LvimTestGdscriptConfig
+---@field args string[]              Extra GUT args
+---@field env  table<string,string>
 
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
@@ -240,6 +249,9 @@
 ---@field tcl        LvimTestTclConfig
 ---@field solidity   LvimTestSolidityConfig
 ---@field powershell LvimTestPowershellConfig
+---@field move       LvimTestMoveConfig
+---@field cairo      LvimTestCairoConfig
+---@field gdscript   LvimTestGdscriptConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -375,6 +387,9 @@ return {
             "tcl",
             "solidity",
             "powershell",
+            "move",
+            "cairo",
+            "gdscript",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -505,6 +520,9 @@ return {
         tcl = { args = {}, env = {} },
         solidity = { args = {}, env = {} },
         powershell = { args = {}, env = {} },
+        move = { args = {}, env = {} },
+        cairo = { args = {}, env = {} },
+        gdscript = { args = {}, env = {} },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
