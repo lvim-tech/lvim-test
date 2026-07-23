@@ -113,6 +113,37 @@
 ---@field args string[]              Extra `dub test` args appended on every run
 ---@field env  table<string,string>  Extra environment for the dub test process
 
+---@class LvimTestCrystalConfig
+---@field args string[]              Extra `crystal spec` args
+---@field env  table<string,string>
+---@class LvimTestNimConfig
+---@field args string[]              Extra `nimble test` args
+---@field env  table<string,string>
+---@class LvimTestElmConfig
+---@field args string[]              Extra `elm-test` args
+---@field env  table<string,string>
+---@class LvimTestVConfig
+---@field args string[]              Extra `v test` args
+---@field env  table<string,string>
+---@class LvimTestOdinConfig
+---@field args string[]              Extra `odin test` args
+---@field env  table<string,string>
+---@class LvimTestGleamConfig
+---@field args string[]              Extra `gleam test` args
+---@field env  table<string,string>
+---@class LvimTestRacketConfig
+---@field args string[]              Extra `raco test` args
+---@field env  table<string,string>
+---@class LvimTestPurescriptConfig
+---@field args string[]              Extra `spago test` args
+---@field env  table<string,string>
+---@class LvimTestAdaConfig
+---@field args string[]              Extra `gnattest` args
+---@field env  table<string,string>
+---@class LvimTestHareConfig
+---@field args string[]              Extra `hare test` args
+---@field env  table<string,string>
+
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
 ---@field go         LvimTestGoConfig
@@ -139,6 +170,16 @@
 ---@field r          LvimTestRConfig
 ---@field perl       LvimTestPerlConfig
 ---@field d          LvimTestDConfig
+---@field crystal    LvimTestCrystalConfig
+---@field nim        LvimTestNimConfig
+---@field elm        LvimTestElmConfig
+---@field v          LvimTestVConfig
+---@field odin       LvimTestOdinConfig
+---@field gleam      LvimTestGleamConfig
+---@field racket     LvimTestRacketConfig
+---@field purescript LvimTestPurescriptConfig
+---@field ada        LvimTestAdaConfig
+---@field hare       LvimTestHareConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -249,6 +290,16 @@ return {
             "r",
             "perl",
             "d",
+            "crystal",
+            "nim",
+            "elm",
+            "v",
+            "odin",
+            "gleam",
+            "racket",
+            "purescript",
+            "ada",
+            "hare",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -354,6 +405,16 @@ return {
             args = {}, -- extra `dub test` args on every run
             env = {},
         },
+        crystal = { args = {}, env = {} },
+        nim = { args = {}, env = {} },
+        elm = { args = {}, env = {} },
+        v = { args = {}, env = {} },
+        odin = { args = {}, env = {} },
+        gleam = { args = {}, env = {} },
+        racket = { args = {}, env = {} },
+        purescript = { args = {}, env = {} },
+        ada = { args = {}, env = {} },
+        hare = { args = {}, env = {} },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
