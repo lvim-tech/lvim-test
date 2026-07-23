@@ -170,6 +170,12 @@
 ---@class LvimTestPascalConfig
 ---@field args string[]              Extra `fpcunit` args
 ---@field env  table<string,string>
+---@class LvimTestTerraformConfig
+---@field args string[]              Extra `terraform test` args
+---@field env  table<string,string>
+---@class LvimTestAnsibleConfig
+---@field args string[]              Extra `molecule test` args
+---@field env  table<string,string>
 
 ---@class LvimTestAdaptersConfig
 ---@field enabled    string[]           Built-in adapters to load (each self-registers)
@@ -216,6 +222,8 @@
 ---@field grain      LvimTestGrainConfig
 ---@field commonlisp LvimTestCommonlispConfig
 ---@field pascal     LvimTestPascalConfig
+---@field terraform  LvimTestTerraformConfig
+---@field ansible    LvimTestAnsibleConfig
 
 ---@class LvimTestDiscoveryConfig
 ---@field ignore_dirs string[]         Directories pruned from the project walk
@@ -345,6 +353,8 @@ return {
             "grain",
             "commonlisp",
             "pascal",
+            "terraform",
+            "ansible",
         },
         go = {
             args = {}, -- extra `go test` args on every run
@@ -469,6 +479,8 @@ return {
         grain = { args = {}, env = {} },
         commonlisp = { args = {}, env = {} },
         pascal = { args = {}, env = {} },
+        terraform = { args = {}, env = {} },
+        ansible = { args = {}, env = {} },
     },
 
     -- Discovery: the project WALK that lists candidate test files for the summary tree (parsing
