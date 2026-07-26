@@ -645,6 +645,9 @@ function M.open()
         -- Footer legend (DISPLAY-only chips — the keys are already bound on the panel above; a chip's
         -- `run` still fires on click). The surface's place_footer hides this band while a dock (the tasks
         -- panel) overlaps the side tree's bottom, and re-shows it when the dock closes.
+        -- `<C-j>` descends from the panel into these chips (`<C-l>`/`<C-h>` move, `<CR>` runs, `<C-k>`/`q`
+        -- step back up) — the keyboard path to the footer, layer by layer.
+        footer_nav = true,
         footer = {
             bars = {
                 {
