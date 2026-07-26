@@ -233,19 +233,13 @@ function M.run(req)
         -- summary tree still OPENS the panel (you want the output) but keeps focus in the tree
         -- (`keep_focus`) — the panel opening must not yank the cursor out of the sidebar.
         if config.run.open_panel and not req.transient then
-            local keep = req.keep_focus and vim.api.nvim_get_current_win() or nil
+            -- `keep_focus` asks the dock to REVEAL WITHOUT FOCUSING (lvim-utils.dock `focus = false`,
+            -- threaded through lvim-tasks.open). The focus is never taken, so there is nothing to
+            -- restore — the previous approach re-took it after a 60ms delay, which was a guess at how
+            -- long the dock's deferred show takes and would lose the race on a slow machine.
             pcall(function()
-                require("lvim-tasks").open()
+                require("lvim-tasks").open(nil, { focus = not req.keep_focus })
             end)
-            if keep then
-                -- The dock enters the tasks panel on a DEFERRED tick, so a plain schedule restores
-                -- focus too early (the dock then re-steals it). Restore a beat later, after it settles.
-                vim.defer_fn(function()
-                    if vim.api.nvim_win_is_valid(keep) then
-                        pcall(vim.api.nvim_set_current_win, keep)
-                    end
-                end, 60)
-            end
         end
     end
     return task
