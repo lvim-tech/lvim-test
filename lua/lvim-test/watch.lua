@@ -35,6 +35,22 @@ end
 --- Whether a position id is watched under a root.
 ---@param root string
 ---@param id string
+--- Release a root's debounce timer. Stopping is not enough — a stopped `uv_timer_t` still holds its
+--- handle, so a session that watches and un-watches many roots would accumulate one per root.
+---@param root string
+---@return nil
+local function release_timer(root)
+    local timer = timers[root]
+    if not timer then
+        return
+    end
+    timer:stop()
+    if not timer:is_closing() then
+        timer:close()
+    end
+    timers[root] = nil
+end
+
 ---@return boolean
 function M.is_watching(root, id)
     return (watched[root] or {})[id] ~= nil
@@ -51,6 +67,7 @@ function M.toggle(root, adapter, pos)
         watched[root][pos.id] = nil
         if not next(watched[root]) then
             watched[root] = nil
+            release_timer(root) -- nothing left to re-run for this root; on_save recreates on demand
         end
     else
         watched[root][pos.id] = pos
@@ -72,11 +89,13 @@ end
 function M.stop(root)
     if root then
         watched[root] = nil
+        release_timer(root)
         ping(root)
     else
         local roots = vim.tbl_keys(watched)
         watched = {}
         for _, r in ipairs(roots) do
+            release_timer(r)
             ping(r)
         end
     end
