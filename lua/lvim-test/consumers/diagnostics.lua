@@ -27,7 +27,7 @@ local function repaint(root)
     local buf_of = loaded.map() -- O(1) path→bufnr (never vim.fn.bufnr per position — see signs.lua)
     ---@type table<string, string>  memo: raw position path → its normalized form
     local norm = {}
-    ---@type table<integer, vim.Diagnostic[]>
+    ---@type table<integer, vim.Diagnostic.Set[]>
     local by_buf = {}
     for id, res in pairs(results.for_root(root)) do
         if res.status == "failed" and res.errors then

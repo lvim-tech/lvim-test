@@ -27,8 +27,6 @@ local QUERY = [[
   (string) @test.name) @test.definition
 ]]
 
-local M = {}
-
 --- The `zig` binary for a root: the lvim-lang Zig toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -63,7 +61,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- Zig tests live inline in any `.zig` file; the treesitter query surfaces only files that
         -- actually contain a `test` block.
         return path:match("%.zig$") ~= nil

@@ -48,11 +48,17 @@ local last_req = {}
 ---@return nil
 local function do_save()
     local mode = config.run.save
+    -- `vim.cmd` is a callable TABLE, not a function, so it cannot be pcall's first argument;
+    -- the closure keeps the same "never let a write error abort the run" behaviour.
     if mode == "all" then
-        pcall(vim.cmd, "silent! wall")
+        pcall(function()
+            vim.cmd("silent! wall")
+        end)
     elseif mode == "current" then
         if vim.bo.modifiable and vim.bo.modified and vim.api.nvim_buf_get_name(0) ~= "" then
-            pcall(vim.cmd, "silent! write")
+            pcall(function()
+                vim.cmd("silent! write")
+            end)
         end
     end
 end

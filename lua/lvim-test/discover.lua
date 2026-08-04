@@ -81,11 +81,15 @@ local function run_query(ctx, query_str)
     if not ok_parse or not query then
         return {}
     end
+    -- Kept in a local: the source is a bufnr OR a content string, and only a local narrows to the
+    -- branch's type for the two differently-typed parser constructors.
+    local source = ctx.source
     local parser
-    if type(ctx.source) == "number" then
-        parser = vim.treesitter.get_parser(ctx.source, ctx.lang)
+    if type(source) == "number" then
+        parser = vim.treesitter.get_parser(source, ctx.lang)
     else
-        parser = vim.treesitter.get_string_parser(ctx.source, ctx.lang)
+        ---@cast source string
+        parser = vim.treesitter.get_string_parser(source, ctx.lang)
     end
     if not parser then
         return {}

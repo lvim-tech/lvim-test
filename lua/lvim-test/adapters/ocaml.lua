@@ -27,8 +27,6 @@ local QUERY = [[
   (#lua-match? @test.name "^test"))
 ]]
 
-local M = {}
-
 --- The `dune` binary for a root: the lvim-lang OCaml toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -76,7 +74,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- dune tests conventionally live under a `test/` or `tests/` dir and/or are named
         -- `test_*.ml` / `*_test.ml`; the treesitter query then surfaces only files with test bindings.
         if path:match("%.mli?$") == nil then

@@ -32,9 +32,6 @@ local function ping(root)
     vim.api.nvim_exec_autocmds("User", { pattern = "LvimTestResults", data = { root = root, ids = {} } })
 end
 
---- Whether a position id is watched under a root.
----@param root string
----@param id string
 --- Release a root's debounce timer. Stopping is not enough — a stopped `uv_timer_t` still holds its
 --- handle, so a session that watches and un-watches many roots would accumulate one per root.
 ---@param root string
@@ -134,6 +131,7 @@ end
 local function on_save(path)
     for root, set in pairs(watched) do
         if next(set) and path:sub(1, #root + 1) == root .. "/" then
+            ---@type uv.uv_timer_t?
             local timer = timers[root]
             if timer then
                 timer:stop()
@@ -141,13 +139,15 @@ local function on_save(path)
                 timer = vim.uv.new_timer()
                 timers[root] = timer
             end
-            timer:start(
-                config.watch.debounce_ms or 300,
-                0,
-                vim.schedule_wrap(function()
-                    rerun(root, path)
-                end)
-            )
+            if timer then
+                timer:start(
+                    config.watch.debounce_ms or 300,
+                    0,
+                    vim.schedule_wrap(function()
+                        rerun(root, path)
+                    end)
+                )
+            end
         end
     end
 end

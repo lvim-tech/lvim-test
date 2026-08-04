@@ -35,8 +35,6 @@ local QUERY = [[
   (#match? @_attr "Fact|Theory|TestMethod|TestCase|Test")) @test.definition
 ]]
 
-local M = {}
-
 --- The `dotnet` binary for a root: the lvim-lang C# toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -183,7 +181,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- C# tests live in any `.cs`; the treesitter query surfaces only files that hold test methods.
         -- A cheap name filter still prunes the walk to the conventional test files.
         local tail = vim.fn.fnamemodify(path, ":t")

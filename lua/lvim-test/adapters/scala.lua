@@ -42,8 +42,6 @@ local QUERY = [[
   (#eq? @_fn "test")) @test.definition
 ]]
 
-local M = {}
-
 --- The build tool for a root: "sbt" (`build.sbt`) → "mill" (`build.sc`) → nil.
 ---@param root string
 ---@return "sbt"|"mill"|nil
@@ -198,7 +196,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         local tail = vim.fn.fnamemodify(path, ":t")
         return tail:match("Spec%.scala$") ~= nil
             or tail:match("Suite%.scala$") ~= nil

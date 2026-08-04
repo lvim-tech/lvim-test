@@ -32,8 +32,6 @@ local QUERY = [[
   (#eq? @_t "test")) @test.definition
 ]]
 
-local M = {}
-
 --- The `mix` command prefix for a root: the lvim-lang Elixir toolchain when active, else PATH, else
 --- the bare name. Returned as an argv list ending in `test`.
 ---@param root string
@@ -123,7 +121,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("_test%.exs$") ~= nil
     end,
 

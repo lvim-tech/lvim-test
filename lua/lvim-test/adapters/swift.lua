@@ -31,8 +31,6 @@ local QUERY = [[
   (#match? @test.name "^test")) @test.definition
 ]]
 
-local M = {}
-
 --- The `swift` binary for a root: the lvim-lang Swift toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -73,7 +71,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- SwiftPM tests live under a `Tests/` target and are conventionally named `<X>Tests.swift`;
         -- the treesitter query then surfaces only files that actually contain XCTest methods.
         return path:match("[Tt]ests?%.swift$") ~= nil or path:match("/Tests/") ~= nil

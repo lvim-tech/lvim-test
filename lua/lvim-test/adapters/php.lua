@@ -34,8 +34,6 @@ local QUERY = [[
   (#match? @_attr "Test")) @test.definition
 ]]
 
-local M = {}
-
 --- The `phpunit` binary for a root: the project-local `vendor/bin/phpunit`, else the lvim-lang PHP
 --- toolchain when active, else PATH, else the bare name.
 ---@param root string
@@ -159,7 +157,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         local tail = vim.fn.fnamemodify(path, ":t")
         return tail:match("Test%.php$") ~= nil or tail:match("^Test.*%.php$") ~= nil
     end,

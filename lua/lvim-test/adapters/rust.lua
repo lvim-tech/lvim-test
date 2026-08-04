@@ -27,8 +27,6 @@ local QUERY = [[
   (#lua-match? @_attr "test"))
 ]]
 
-local M = {}
-
 --- The `cargo` binary for a root: the lvim-lang Rust toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -70,7 +68,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- Rust tests live anywhere (inline `#[cfg(test)] mod tests`, or under tests/): every `.rs`
         -- is a candidate; the treesitter query surfaces only files that actually contain tests.
         return path:match("%.rs$") ~= nil

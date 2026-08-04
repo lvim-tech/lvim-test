@@ -22,13 +22,10 @@ local QUERY = [[
 @test.definition
 ]]
 
-local M = {}
-
---- The `go` binary for a root (PATH for now; the lvim-lang toolchain seam is added with the
---- later adapters). Falls back to the bare name so the task still reports a clean "not found".
----@param _root string
+--- The `go` binary (PATH for now; the lvim-lang toolchain seam is added with the later
+--- adapters). Falls back to the bare name so the task still reports a clean "not found".
 ---@return string
-local function go_bin(_root)
+local function go_bin()
     local p = vim.fn.exepath("go")
     return p ~= "" and p or "go"
 end
@@ -58,7 +55,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("_test%.go$") ~= nil
     end,
 
@@ -105,7 +102,7 @@ local adapter = {
             end
         end
 
-        local go = go_bin(root)
+        local go = go_bin()
         local cmd = { go, "test", "-json" }
         local a = config.adapters.go
         if a.tags and a.tags ~= "" then

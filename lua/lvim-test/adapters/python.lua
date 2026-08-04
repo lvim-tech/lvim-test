@@ -21,8 +21,6 @@ local QUERY = [[
   (#lua-match? @test.name "^test")) @test.definition
 ]]
 
-local M = {}
-
 --- The Python interpreter for a root: the lvim-lang Python toolchain (venv) when active, else
 --- `python3` / `python` on PATH, else the bare name.
 ---@param root string
@@ -72,7 +70,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         local tail = vim.fn.fnamemodify(path, ":t")
         return tail:match("^test_.*%.py$") ~= nil or tail:match(".*_test%.py$") ~= nil
     end,

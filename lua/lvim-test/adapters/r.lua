@@ -48,7 +48,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("[/\\]tests[/\\]testthat[/\\]test.*%.[rR]$") ~= nil
     end,
 

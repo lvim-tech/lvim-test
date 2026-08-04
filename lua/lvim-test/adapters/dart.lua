@@ -29,8 +29,6 @@ local QUERY = [[
 ---@type table<string, boolean>  root → is a Flutter project (cached)
 local flutter_cache = {}
 
-local M = {}
-
 --- Whether a root is a Flutter project (pubspec.yaml declares the flutter SDK / dependency).
 ---@param root string
 ---@return boolean
@@ -98,7 +96,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("_test%.dart$") ~= nil
     end,
 
@@ -276,9 +274,8 @@ local adapter = {
         return nil
     end,
 
-    ---@param ctx table
     ---@return table<string, LvimTestResult>
-    parse = function(ctx)
+    parse = function()
         -- Streaming produces every per-test status. A compile/load failure yields no testDone for
         -- the covered positions; run.lua's missing_result resolves those. Nothing to add here.
         return {}

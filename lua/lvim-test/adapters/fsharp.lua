@@ -43,8 +43,6 @@ local QUERY = [[
   (#match? @_attr "Fact|Theory|TestCase|Test|Property")) @test.definition
 ]]
 
-local M = {}
-
 --- The `dotnet` binary for a root: the lvim-lang F# toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -185,7 +183,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- F# tests live in any `.fs`; the treesitter query surfaces only files that hold test bindings.
         -- A cheap name filter still prunes the walk to the conventional test files.
         local tail = vim.fn.fnamemodify(path, ":t")

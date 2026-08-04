@@ -33,8 +33,6 @@ local QUERY = [[
   (#any-of? @_t "it" "specify" "example" "scenario" "its")) @test.definition
 ]]
 
-local M = {}
-
 --- The rspec command prefix for a root: `bundle exec rspec` when a Gemfile + bundler resolve, else
 --- the resolved `rspec` binary (lvim-lang toolchain when active, then PATH, then the bare name).
 ---@param root string
@@ -92,7 +90,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("_spec%.rb$") ~= nil
     end,
 

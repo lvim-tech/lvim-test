@@ -21,7 +21,6 @@
 
 local config = require("lvim-test.config")
 local position = require("lvim-test.position")
-local results = require("lvim-test.results")
 
 -- hspec spec-tree combinators: describe/context open a NAMESPACE; it/specify/prop are EXAMPLES.
 ---@type table<string, "namespace"|"test">
@@ -89,10 +88,13 @@ end
 ---@param ctx LvimTestDiscoverCtx
 ---@return string[]
 local function source_lines(ctx)
-    if type(ctx.source) == "number" then
-        return vim.api.nvim_buf_get_lines(ctx.source, 0, -1, false)
+    -- Kept in a local: only a local narrows `string|integer` to the branch's type.
+    local source = ctx.source
+    if type(source) == "number" then
+        return vim.api.nvim_buf_get_lines(source, 0, -1, false)
     end
-    return vim.split(ctx.source or "", "\n", { plain = true })
+    ---@cast source string
+    return vim.split(source or "", "\n", { plain = true })
 end
 
 --- A position's namespace lineage names (outermost → innermost), from the scope map's parent chain.
@@ -176,7 +178,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         local tail = path:match("[^/]+$") or path
         if tail:match("Spec%.l?hs$") or tail:match("Test%.l?hs$") then
             return true
@@ -298,12 +300,10 @@ local adapter = {
         local lines = ctx.lines or {}
 
         -- Did the suite actually run? hspec prints a `N examples, M failures` (or `N example, …`) summary.
-        local ran, failures = false, 0
+        local ran = false
         for _, l in ipairs(lines) do
-            local n = l:match("(%d+)%s+examples?,%s+%d+%s+failure")
-            if n then
+            if l:match("(%d+)%s+examples?,%s+%d+%s+failure") then
                 ran = true
-                failures = tonumber(l:match("examples?,%s+(%d+)%s+failure")) or 0
             end
         end
 

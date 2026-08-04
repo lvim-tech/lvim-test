@@ -35,8 +35,6 @@ local QUERY = [[
 -- Gradle project markers (any present → Gradle); otherwise a `pom.xml` → Maven.
 local GRADLE_MARKERS = { "settings.gradle", "settings.gradle.kts", "build.gradle", "build.gradle.kts", "gradlew" }
 
-local M = {}
-
 --- The build tool for a root: "gradle" (a Gradle marker) → "maven" (a `pom.xml`) → nil.
 ---@param root string
 ---@return "gradle"|"maven"|nil
@@ -177,7 +175,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         local tail = vim.fn.fnamemodify(path, ":t")
         return tail:match("Test%.java$") ~= nil
             or tail:match("Tests%.java$") ~= nil

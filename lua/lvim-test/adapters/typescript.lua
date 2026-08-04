@@ -25,8 +25,6 @@ local QUERY = [[
   arguments: (arguments (string) @test.name)) @test.definition
 ]]
 
-local M = {}
-
 --- Whether a root is a jest project (config file or a jest devDependency / test script), else vitest.
 ---@param root string
 ---@return "vitest"|"jest"
@@ -102,7 +100,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         return path:match("%.[cm]?[jt]sx?$")
             and (path:match("%.test%.") or path:match("%.spec%.") or path:match("__tests__")) ~= nil
     end,

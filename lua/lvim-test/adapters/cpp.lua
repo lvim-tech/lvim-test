@@ -50,11 +50,10 @@ local function ere_escape(s)
     return (s:gsub("[%.%^%$%*%+%?%(%)%[%]%{%}%\\|]", "\\%0"))
 end
 
---- The `ctest` binary for a root: the lvim-lang C/C++ toolchain when active, else PATH, else the name.
+--- The `ctest` binary: the configured path when executable, else PATH, else the bare name.
 --- (ctest ships with cmake; the cpp provider resolves cmake, and ctest lives beside it on PATH.)
----@param _root string
 ---@return string
-local function ctest_bin(_root)
+local function ctest_bin()
     local a = config.adapters.cpp or {}
     if a.ctest_path and vim.fn.executable(a.ctest_path) == 1 then
         return a.ctest_path
@@ -74,7 +73,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         if
             not path:match("%.cpp$")
             and not path:match("%.cc$")
@@ -99,11 +98,15 @@ local adapter = {
         if not ok_q or not query then
             return {}
         end
+        -- Kept in a local: the source is a bufnr OR a content string, and only a local narrows to
+        -- the branch's type for the two differently-typed parser constructors.
+        local source = ctx.source
         local parser
-        if type(ctx.source) == "number" then
-            parser = ts.get_parser(ctx.source, ctx.lang)
+        if type(source) == "number" then
+            parser = ts.get_parser(source, ctx.lang)
         else
-            parser = ts.get_string_parser(ctx.source, ctx.lang)
+            ---@cast source string
+            parser = ts.get_string_parser(source, ctx.lang)
         end
         if not parser then
             return {}
@@ -205,7 +208,7 @@ local adapter = {
 
         local a = config.adapters.cpp or {}
         local build_dir = a.build_dir or "build"
-        local cmd = { ctest_bin(root), "--test-dir", build_dir, "--output-on-failure" }
+        local cmd = { ctest_bin(), "--test-dir", build_dir, "--output-on-failure" }
         if not run_all and #names > 0 then
             local escaped = {}
             for _, n in ipairs(names) do

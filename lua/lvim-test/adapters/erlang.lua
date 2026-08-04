@@ -27,8 +27,6 @@ local QUERY = [[
   (#match? @test.name "_test_?$")) @test.definition
 ]]
 
-local M = {}
-
 --- The `rebar3` binary for a root: the lvim-lang Erlang toolchain when active, else PATH, else the name.
 ---@param root string
 ---@return string
@@ -62,7 +60,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- EUnit tests live in any module (inline `*_test` functions, or a `<module>_tests.erl`
         -- companion): every `.erl` is a candidate; the treesitter query surfaces only files that
         -- actually contain test functions.

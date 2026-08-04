@@ -121,9 +121,13 @@ end
 function M.tick_timer()
     local any = next(spinning) ~= nil
     if any and not timer then
-        timer = vim.uv.new_timer()
+        local t = vim.uv.new_timer()
+        if not t then
+            return
+        end
+        timer = t
         local interval = math.floor(1000 / math.max(1, config.status.fps))
-        timer:start(
+        t:start(
             interval,
             interval,
             vim.schedule_wrap(function()

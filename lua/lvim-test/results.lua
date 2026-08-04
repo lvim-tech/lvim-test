@@ -89,11 +89,16 @@ local function emit(root, ids)
     for _, id in ipairs(ids) do
         set[id] = true
     end
-    if not emit_timer then
-        emit_timer = vim.uv.new_timer()
+    local t = emit_timer
+    if not t then
+        t = vim.uv.new_timer()
+        if not t then
+            return
+        end
+        emit_timer = t
     end
-    emit_timer:stop()
-    emit_timer:start(50, 0, vim.schedule_wrap(flush))
+    t:stop()
+    t:start(50, 0, vim.schedule_wrap(flush))
 end
 
 --- Mark a set of position ids "running" (clearing any prior result) and notify. Used the moment a

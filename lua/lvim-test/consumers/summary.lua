@@ -11,7 +11,6 @@
 local config = require("lvim-test.config")
 local registry = require("lvim-test.registry")
 local discover = require("lvim-test.discover")
-local position = require("lvim-test.position")
 local results = require("lvim-test.results")
 local run = require("lvim-test.run")
 
@@ -413,12 +412,12 @@ local function set_keys(map)
             if n and n.data.pos and state.root and state.adapter then
                 local pos = n.data.pos
                 local buf = vim.fn.bufnr(pos.path)
-                local map = discover.file(state.adapter, pos.path, buf ~= -1 and buf or nil)
+                local scope_map = discover.file(state.adapter, pos.path, buf ~= -1 and buf or nil)
                 require("lvim-test.dapstrat").run({
                     adapter = state.adapter,
                     root = state.root,
-                    scope_map = map,
-                    targets = { map[pos.id] or pos },
+                    scope_map = scope_map,
+                    targets = { scope_map[pos.id] or pos },
                     keep_focus = true,
                 })
             end
@@ -533,8 +532,6 @@ function M.is_open()
     return state.panel ~= nil and state.panel.valid()
 end
 
---- Repaint the tree (icons/details/marks) and drive the running spinner.
----@return nil
 ---@type uv.uv_timer_t?
 local refresh_timer
 
@@ -578,11 +575,16 @@ function M.refresh()
     if not M.is_open() then
         return
     end
-    if not refresh_timer then
-        refresh_timer = vim.uv.new_timer()
+    local t = refresh_timer
+    if not t then
+        t = vim.uv.new_timer()
+        if not t then
+            return
+        end
+        refresh_timer = t
     end
-    refresh_timer:stop()
-    refresh_timer:start(50, 0, vim.schedule_wrap(rebuild))
+    t:stop()
+    t:start(50, 0, vim.schedule_wrap(rebuild))
 end
 
 --- Open the summary sidebar for the current buffer's project.

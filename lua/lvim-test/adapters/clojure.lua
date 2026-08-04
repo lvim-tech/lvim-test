@@ -33,8 +33,6 @@ local QUERY = [[
   (#any-of? @_kw "deftest" "deftest-" "defspec")) @test.definition
 ]]
 
-local M = {}
-
 --- Resolve `tool` ("clojure" | "lein" | "boot"): the lvim-lang Clojure toolchain when active for
 --- `root`, else PATH, else the bare name.
 ---@param tool string
@@ -106,7 +104,7 @@ local adapter = {
 
     ---@param path string
     ---@return boolean
-    is_test_file = function(path, _root)
+    is_test_file = function(path, _)
         -- Clojure test namespaces conventionally live under a test/ tree and/or end in `_test`; the
         -- treesitter query surfaces only files that actually contain a deftest, so a slightly wide net
         -- here is harmless. Accept every Clojure source extension.
