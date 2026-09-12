@@ -32,7 +32,7 @@ local adapter = {
     ---@param path string
     ---@return boolean
     is_test_file = function(path, _)
-        return path:match("%%.adb$") ~= nil
+        return path:match("%.adb$") ~= nil
     end,
 
     ---@param req LvimTestRunRequest

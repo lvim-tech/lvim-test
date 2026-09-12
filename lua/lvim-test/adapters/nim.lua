@@ -32,7 +32,7 @@ local adapter = {
     ---@param path string
     ---@return boolean
     is_test_file = function(path, _)
-        return path:match("[/\\]tests?[/\\].*%%.nim$") ~= nil
+        return path:match("[/\\]tests?[/\\].*%.nim$") ~= nil
     end,
 
     ---@param req LvimTestRunRequest
