@@ -86,12 +86,29 @@ function M.check()
         for _, a in ipairs((dap.list_adapters and dap.list_adapters()) or {}) do
             types[a.type or a.id or a] = true
         end
-        -- The built-in adapters' debug configs use these DAP adapter types.
-        for _, need in ipairs({ { "go", "go/delve" }, { "dart", "dart" } }) do
-            if types[need[1]] then
-                h.ok(("DAP adapter '%s' registered (%s debugging)"):format(need[1], need[2]))
-            else
-                h.info(("DAP adapter '%s' not registered — %s debugging needs it"):format(need[1], need[2]))
+        -- The DAP adapter type each debug-capable built-in adapter's `debug` config asks for (the
+        -- `type` field in lua/lvim-test/adapters/<name>.lua). Reported only for adapters that are
+        -- actually registered, so a disabled language does not nag.
+        local needs = {
+            { "go", "go", "go/delve" },
+            { "dart", "dart", "dart" },
+            { "python", "python", "python/debugpy" },
+            { "typescript", "pwa-node", "typescript/javascript (vscode-js-debug)" },
+            { "java", "java", "java" },
+            { "kotlin", "kotlin", "kotlin" },
+            { "scala", "scala", "scala (metals)" },
+            { "php", "php", "php (xdebug)" },
+            { "ruby", "ruby", "ruby (rdbg)" },
+            { "elixir", "mix_task", "elixir (mix test)" },
+            { "haskell", "haskell", "haskell" },
+        }
+        for _, need in ipairs(needs) do
+            if registry.get(need[1]) then
+                if types[need[2]] then
+                    h.ok(("DAP adapter '%s' registered (%s debugging)"):format(need[2], need[3]))
+                else
+                    h.info(("DAP adapter '%s' not registered — %s debugging needs it"):format(need[2], need[3]))
+                end
             end
         end
     end
