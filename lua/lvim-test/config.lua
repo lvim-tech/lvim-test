@@ -554,8 +554,9 @@ return {
         env = {}, -- extra env for every test process
     },
 
-    -- Persistence through lvim-utils.store (json): last run, marks, and the last run's statuses
-    -- (so signs come back on a fresh session).
+    -- RESERVED — persistence through lvim-utils.store is not wired yet: nothing reads these keys
+    -- (results.lua keeps the store in memory; it is emptied on restart). Kept so a project-local or
+    -- user config that sets them keeps merging cleanly.
     persist = {
         enabled = true,
         statuses = true,
@@ -573,9 +574,11 @@ return {
     summary = {
         side = "right", -- "right" | "left"
         width = 44,
-        follow = true, -- tree cursor follows the editing position
-        counts = true, -- aggregate pass/fail counts on dir/file rows
-        expand_failed = true, -- auto-expand ancestors of failures after a run
+        -- RESERVED — the three flags below are not read by the summary yet: the tree does not follow
+        -- the cursor, the per-file counts are always shown, and failures are not auto-expanded.
+        follow = true,
+        counts = true,
+        expand_failed = true,
         -- Every key is remappable; set one to false to disable it.
         keys = {
             run = "r",
@@ -604,7 +607,8 @@ return {
     -- Output windows: a per-test output float (lvim-ui) and the full-run terminal (tasks panel).
     output = {
         open_on_fail = "short", -- after a failed run: "short" | "full" | false
-        max_height = 0.6, -- info-float caps (fraction of the editor, or absolute rows)
+        -- RESERVED — not read yet: the output float takes lvim-ui's default info-float size.
+        max_height = 0.6,
         max_width = 0.7,
     },
 
@@ -622,7 +626,7 @@ return {
         virtual_text = false, -- eol status icon + short message on the test line
         fps = 8, -- spinner repaint rate (running rows)
         format = "{passed} {failed} {skipped}", -- statusline segment template
-        hud_flash_ms = 3000, -- lvim-hud overlay flash after a run (0 = off)
+        hud_flash_ms = 3000, -- RESERVED — no lvim-hud flash is implemented yet; the value is not read
     },
 
     -- Watch mode: re-run watched positions on save (debounced), scoped to the file or the project.

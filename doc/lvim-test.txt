@@ -25,18 +25,32 @@ which files are tests, a treesitter query that finds the individual tests, how
 to build the run command, and how to read the runner's output. The engine owns
 discovery, the run pipeline and the results; it never branches on a language.
 
-Shipped adapters: Go (`go test -json`) and Dart / Flutter (`flutter test
---machine` / `dart test --reporter=json`). External adapters self-register.
+52 adapters ship, all enabled by default, in two granularities:
+
+    per-test        Go, Dart / Flutter, Rust, Python, TypeScript / JavaScript,
+                    C / C++ (CTest), Java, C#, F#, Kotlin, Scala, Swift, PHP,
+                    Ruby, Zig, OCaml, Erlang, Elixir, Haskell, Clojure, Julia,
+                    R — the individual tests are discovered and get their own
+                    result.
+    file / suite    Perl (per .t file), D, Crystal, Nim, Elm, V, Odin, Gleam,
+                    Racket, PureScript, Ada, Hare, Groovy, ReScript, Vala, Roc,
+                    Fish, Nushell, Grain, Common Lisp, Pascal, Terraform,
+                    Ansible, Fortran, Tcl, Solidity, PowerShell, Move, Cairo,
+                    GDScript — every covered file takes the run's outcome.
+
+External adapters self-register. Results live in memory for the session; they
+are not persisted across restarts yet.
 
 ==============================================================================
 2. REQUIREMENTS                                          *lvim-test-requirements*
 
-    - Neovim >= 0.11
+    - Neovim >= 0.12 (what lvim-ui and lvim-utils need)
     - lvim-tasks   the execution backend (required)
     - lvim-ui      windows (required)
-    - lvim-utils   palette / merge / store / cursor (required)
+    - lvim-utils   palette / merge / cursor (required)
     - lvim-ts      treesitter parsers for discovery (required)
-    - lvim-dap     optional: debug a test
+    - lvim-dap     optional: debug a test (Go, Dart, Python, TypeScript, Java,
+                   Kotlin, Scala, PHP, Ruby, Elixir, Haskell)
     - lvim-lang    optional: toolchain resolution (FVM / explicit SDK)
 
 ==============================================================================
@@ -78,15 +92,19 @@ with Neovim's native `vim.pack`: >lua
 overridable and your values win. See the README for the COMPLETE default block
 (kept in sync with `lua/lvim-test/config.lua`). The top-level groups:
 
-    adapters      enabled built-ins ("go", "dart") + per-adapter options
+    adapters      `enabled` (the 52 built-ins) + per-adapter options
     discovery     the project file-walk (ignore_dirs, max_files)
-    run           save / concurrency / on_busy / missing_result / env
-    persist       last run / marks / statuses via lvim-utils.store
+    run           save / concurrency / on_busy / missing_result / open_panel /
+                  env — `on_busy = "queue"` starts the new run at once; true
+                  queueing is not implemented yet ("replace" / "reject" are)
+    persist       RESERVED — not read yet (results are per session)
     project       the ".lvim/test/config.lua" per-project override location
-    summary       the docked summary tree (side / width / follow / keys)
-    output        per-test output float caps + open_on_fail
+    summary       the docked summary tree (side / width / keys; `follow`,
+                  `counts`, `expand_failed` are RESERVED — not read yet)
+    output        open_on_fail (`max_height` / `max_width` are RESERVED)
     diagnostics   inline failure diagnostics (own vim.diagnostic namespace)
     status        gutter signs / eol status / spinner / statusline format
+                  (`hud_flash_ms` is RESERVED — no lvim-hud flash yet)
     watch         re-run on save (debounce / scope)
     icons         every glyph (Nerd Font; the spinner is single-width braille)
 
@@ -109,9 +127,13 @@ require("lvim-test").register({adapter})
 An adapter is a table registered in any load order, at runtime. The minimum:
 `name`, `filetypes`, `root_markers`, a cheap `is_test_file`, a treesitter
 discovery `query` (capturing `@test.name`/`@test.definition` and optionally
-`@namespace.name`/`@namespace.definition`), a `build` returning the argv, and a
-`parse` (or a streaming `stream`) turning runner output into per-position
-`{ status, short?, output?, errors? }`. See `lua/lvim-test/adapters/go.lua`.
+`@namespace.name`/`@namespace.definition`) or a custom `discover`, a `build`
+returning the argv, and a `parse` (or a streaming `stream`) turning runner
+output into per-position `{ status, short?, output?, errors? }`. Without
+`query`/`discover` the adapter is suite-granular: its test files are the
+positions and `parse` marks them from the run. See
+`lua/lvim-test/adapters/go.lua` (streaming, per-test) and
+`lua/lvim-test/adapters/crystal.lua` (minimal, suite-granular).
 
 ==============================================================================
 8. STATUSLINE                                              *lvim-test-statusline*
@@ -126,6 +148,8 @@ statusline; an empty string when the buffer has no adapter or no results.
 9. HEALTH                                                      *lvim-test-health*
 
 `:checkhealth lvim-test` reports the ecosystem dependencies, the registered
-adapters and each adapter's tool + treesitter-parser availability.
+adapters, each adapter's tool + treesitter-parser availability and, when
+lvim-dap is installed, whether the DAP adapter type each debug-capable adapter
+needs is registered.
 
 vim:tw=78:ts=8:ft=help:norl:

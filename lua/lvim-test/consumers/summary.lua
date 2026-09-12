@@ -596,7 +596,7 @@ function M.open()
     local adapter, root = registry.for_buffer(vim.api.nvim_get_current_buf())
     if not adapter or not root then
         vim.notify(
-            "lvim-test: open the summary from a go/dart project buffer",
+            "lvim-test: open the summary from a buffer inside a project a test adapter recognises",
             vim.log.levels.WARN,
             { title = "lvim-test" }
         )
