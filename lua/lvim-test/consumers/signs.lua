@@ -25,6 +25,12 @@ local frame = 1
 ---@type table<string, boolean>  roots with at least one running position (drive the spinner)
 local spinning = {}
 
+---@type table<string, table<integer, boolean>>  root → buffers this consumer painted signs into
+--- A repaint only touches buffers that still hold a result; without this record a buffer whose
+--- results were CLEARED (`:LvimTest clear`, a re-run that dropped a file) kept its old dots forever,
+--- because nothing ever visited it again to wipe the namespace.
+local painted = {}
+
 --- The sign glyph + highlight for a status (running uses the current spinner frame).
 ---@param status string
 ---@return string, string
@@ -89,7 +95,21 @@ local function repaint(root)
         end
     end
 
+    -- Buffers painted on a previous pass that hold no result now: wipe their dots. A `clear()` of every
+    -- root arrives with root == "" — sweep every recorded buffer then.
+    local now = {}
+    local roots = (root == "") and vim.tbl_keys(painted) or { root }
+    for _, r in ipairs(roots) do
+        for buf in pairs(painted[r] or {}) do
+            if not by_buf[buf] and vim.api.nvim_buf_is_loaded(buf) then
+                vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+            end
+        end
+        painted[r] = nil
+    end
+
     for buf, list in pairs(by_buf) do
+        now[buf] = true
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
         local lines = vim.api.nvim_buf_line_count(buf)
         for _, it in ipairs(list) do
@@ -109,6 +129,9 @@ local function repaint(root)
                 pcall(vim.api.nvim_buf_set_extmark, buf, ns, it.row, 0, opts)
             end
         end
+    end
+    if next(now) then
+        painted[root] = now
     end
 
     spinning[root] = running or nil
