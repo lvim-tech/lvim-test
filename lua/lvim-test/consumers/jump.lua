@@ -53,7 +53,15 @@ function M.jump(dir, failed_only)
         end
     end
     for _, pos in ipairs(ordered) do
-        local past = dir == "next" and pos.range[1] > row or pos.range[1] < row
+        -- Strictly beyond the cursor in the travel direction. Parenthesised on purpose: written as
+        -- `A and B or C`, the `or` arm fired for every test BEFORE the cursor on a `next` jump, so
+        -- `next` landed on the file's first test from anywhere past it.
+        local past
+        if dir == "next" then
+            past = pos.range[1] > row
+        else
+            past = pos.range[1] < row
+        end
         local ok_fail = not failed_only
             or (
                 root
